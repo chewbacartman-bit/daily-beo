@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Daily Habit Tracker with TV-kun - 習慣</title>
+    
+    <!-- PWA Manifest & Android Standalone App Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#f97316">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Habit Tracker">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
@@ -12,6 +21,17 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Serif+JP:wght@600;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('PWA Service Worker Registered Successfully'))
+            .catch((err) => console.log('Service Worker Failed:', err));
+        });
+      }
+    </script>
 
     <style>
         /* Theme Dynamic Variables */
@@ -140,7 +160,6 @@
             font-family: 'Fredoka', sans-serif;
         }
 
-        /* App Background Pattern */
         .app-bg {
             background-image: var(--pattern-overlay);
         }
@@ -162,7 +181,6 @@
             content: var(--japanese-kanji);
         }
 
-        /* Theme Styling classes */
         .theme-bg-card {
             background-color: var(--bg-card);
             border-color: var(--border-color);
@@ -182,19 +200,17 @@
             color: var(--text-muted);
         }
 
-        /* Color scale variables & explicit classes */
-        .score-0 { background-color: #FF4D4D; color: #ffffff; } /* Red */
-        .score-1 { background-color: #FF6B35; color: #ffffff; } /* Red Orange */
-        .score-2 { background-color: #FF8C00; color: #ffffff; } /* Orange */
-        .score-3 { background-color: #FFD700; color: #1c1c1e; } /* Yellow */
-        .score-4 { background-color: #9ACD32; color: #1c1c1e; } /* Lime Green */
-        .score-5 { background-color: #2ECC71; color: #ffffff; } /* Green */
-        .score-6 { background-color: #00CED1; color: #ffffff; } /* Aqua Teal */
-        .score-7 { background-color: #1E90FF; color: #ffffff; } /* Blue */
-        .score-8 { background-color: #4B0082; color: #ffffff; } /* Indigo */
-        .score-9 { background-color: #8A2BE2; color: #ffffff; } /* Purple */
+        .score-0 { background-color: #FF4D4D; color: #ffffff; }
+        .score-1 { background-color: #FF6B35; color: #ffffff; }
+        .score-2 { background-color: #FF8C00; color: #ffffff; }
+        .score-3 { background-color: #FFD700; color: #1c1c1e; }
+        .score-4 { background-color: #9ACD32; color: #1c1c1e; }
+        .score-5 { background-color: #2ECC71; color: #ffffff; }
+        .score-6 { background-color: #00CED1; color: #ffffff; }
+        .score-7 { background-color: #1E90FF; color: #ffffff; }
+        .score-8 { background-color: #4B0082; color: #ffffff; }
+        .score-9 { background-color: #8A2BE2; color: #ffffff; }
         
-        /* Perfect Golden Score with Shining & Sparkling Effect */
         .score-10 { 
             background: linear-gradient(135deg, #FFE259 0%, #FFA751 50%, #FFD700 100%);
             color: #1c1c1e;
@@ -282,7 +298,6 @@
             100% { opacity: 1; transform: scale(1.3) rotate(15deg); }
         }
 
-        /* Mascot Animations */
         @keyframes tvFloat {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-6px) rotate(1deg); }
@@ -310,55 +325,27 @@
         }
 
         @keyframes antennaPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px #38bdf8); }
-            50% { transform: scale(1.3); filter: drop-shadow(0 0 8px #38bdf8); }
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 2px #38bdf8); }
+            50% { opacity: 1; filter: drop-shadow(0 0 10px #00f0ff); }
         }
 
-        .tv-floating {
-            animation: tvFloat 4s ease-in-out infinite;
-        }
+        .tv-floating { animation: tvFloat 4s ease-in-out infinite; }
+        .tv-bouncing { animation: tvBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .tv-perfect { animation: tvPerfectJoy 1.2s ease-in-out infinite; }
+        .speech-animated { animation: speechPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .antenna-tip { animation: antennaPulse 1.8s ease-in-out infinite; }
 
-        .tv-bouncing {
-            animation: tvBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .tv-perfect {
-            animation: tvPerfectJoy 1.2s ease-in-out infinite;
-        }
-
-        .speech-animated {
-            animation: speechPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        .antenna-tip {
-            animation: antennaPulse 2s infinite;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .tab-content {
-            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
-        }
-
-        .tab-hidden {
-            display: none;
-            opacity: 0;
-            transform: scale(0.98);
-        }
+        .tab-content { transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out; }
+        .tab-hidden { display: none; opacity: 0; transform: scale(0.98); }
     </style>
 </head>
 <body class="app-bg min-h-screen flex flex-col justify-between max-w-md mx-auto shadow-2xl relative border-x border-slate-800/80 overflow-x-hidden">
 
-    <!-- Japanese Kanji Watermark in Background -->
     <div class="kanji-watermark"></div>
 
-    <!-- App Header -->
     <header class="theme-header backdrop-blur-md p-4 sticky top-0 z-20 border-b">
         <div class="flex justify-between items-center mb-3">
             <div class="flex items-center space-x-2">
@@ -368,15 +355,12 @@
                 </h1>
             </div>
 
-            <!-- Theme Switcher Button -->
-            <button id="themeModalBtn" class="flex items-center space-x-1.5 px-3 py-1.5 rounded-full theme-bg-card border text-xs font-semibold hover:brightness-125 transition shadow-sm">
-                <i class="fa-solid fa-palette theme-accent text-sm"></i>
-                <span id="currentThemeLabel">Kitsune</span>
-                <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+            <!-- Settings Gear Button -->
+            <button id="settingsModalBtn" class="flex items-center justify-center w-9 h-9 rounded-full theme-bg-card border text-sm font-semibold hover:brightness-125 transition shadow-sm" title="Settings & Backup">
+                <i class="fa-solid fa-gear theme-accent text-base"></i>
             </button>
         </div>
 
-        <!-- Date Navigation Bar -->
         <div class="flex justify-between items-center mb-3">
             <button id="prevDateBtn" class="p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10 transition">
                 <i class="fa-solid fa-chevron-left text-base"></i>
@@ -392,71 +376,48 @@
             </button>
         </div>
 
-        <!-- TV-kun Mascot Banner Widget -->
         <div class="theme-bg-card rounded-2xl p-3 border shadow-lg relative overflow-hidden flex items-center justify-between">
-            
-            <!-- Left: TV Mascot & Speech Bubble -->
             <div class="flex items-center space-x-3 z-10 flex-1 min-w-0">
-                <!-- SVG TV-kun Mascot -->
                 <div id="tvMascotContainer" class="tv-floating cursor-pointer select-none flex-shrink-0 relative group" title="Tap TV-kun for motivation!">
                     <svg id="tvMascotSvg" width="70" height="70" viewBox="0 0 100 100" class="drop-shadow-md">
-                        <!-- Left Antenna Group (stalk + tip tracked together) -->
+                        <!-- Left Antenna & Orb Tip -->
                         <g class="antenna-group">
-                            <line x1="38" y1="22" x2="22" y2="8" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="20" cy="6" r="4" fill="#38bdf8" class="antenna-tip" />
+                            <line x1="38" y1="22" x2="26" y2="10" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="24" cy="8" r="4" fill="#38bdf8" class="antenna-tip" />
                         </g>
-
-                        <!-- Right Antenna Group (stalk + tip tracked together) -->
+                        <!-- Right Antenna & Orb Tip -->
                         <g class="antenna-group">
-                            <line x1="62" y1="22" x2="78" y2="8" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="80" cy="6" r="4" fill="#38bdf8" class="antenna-tip" />
+                            <line x1="62" y1="22" x2="74" y2="10" stroke="#94a3b8" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="76" cy="8" r="4" fill="#38bdf8" class="antenna-tip" />
                         </g>
-
-                        <!-- Outer TV Body Shell -->
+                        <!-- TV Body Outer Shell -->
                         <rect x="12" y="22" width="76" height="60" rx="14" fill="var(--tv-body)" stroke="#64748b" stroke-width="2.5" />
-                        <!-- Inner Bezel -->
                         <rect x="18" y="27" width="52" height="50" rx="9" fill="#1e293b" />
-                        <!-- Screen Face -->
                         <rect x="21" y="30" width="46" height="44" rx="7" fill="var(--tv-screen)" stroke="#334155" stroke-width="1.5" />
-
-                        <!-- TV Side Controls -->
+                        <!-- Side Dial Controls -->
                         <circle cx="78" cy="36" r="4" fill="#64748b" />
                         <circle cx="78" cy="48" r="4" fill="#64748b" />
                         <line x1="74" y1="62" x2="82" y2="62" stroke="#475569" stroke-width="2" stroke-linecap="round" />
                         <line x1="74" y1="68" x2="82" y2="68" stroke="#475569" stroke-width="2" stroke-linecap="round" />
-
-                        <!-- Screen Face Features -->
-                        <!-- Eyes -->
+                        <!-- Facial Features -->
                         <circle id="tvEyeLeft" cx="33" cy="44" r="3.5" fill="#38bdf8" />
                         <circle id="tvEyeRight" cx="55" cy="44" r="3.5" fill="#38bdf8" />
-                        
-                        <!-- Cute Nose -->
                         <polygon id="tvNose" points="44,48 42,52 46,52" fill="#fbbf24" />
-
-                        <!-- Smiling Mouth -->
                         <path id="tvMouth" d="M 33 55 Q 44 64 55 55" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round" />
-
-                        <!-- Cheeks (Blush) -->
                         <circle cx="28" cy="52" r="2.5" fill="#f43f5e" opacity="0.6" />
                         <circle cx="60" cy="52" r="2.5" fill="#f43f5e" opacity="0.6" />
-
-                        <!-- Red/Accent Bow Tie -->
+                        <!-- Bow & Feet -->
                         <path d="M 36 82 L 44 85 L 36 88 Z" fill="var(--tv-bow)" />
                         <path d="M 52 82 L 44 85 L 52 88 Z" fill="var(--tv-bow)" />
                         <circle cx="44" cy="85" r="2.5" fill="#ffffff" />
-
-                        <!-- TV Legs -->
                         <path d="M 26 82 L 20 94" stroke="#475569" stroke-width="3.5" stroke-linecap="round" />
                         <path d="M 62 82 L 68 94" stroke="#475569" stroke-width="3.5" stroke-linecap="round" />
                     </svg>
                 </div>
 
-                <!-- Speech Bubble -->
                 <div class="flex-1">
                     <div id="speechBubble" class="bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 relative shadow-md speech-animated">
-                        <!-- Speech Tail -->
                         <div class="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-y-[6px] border-y-transparent border-r-[8px] border-r-slate-800"></div>
-                        
                         <div class="flex items-center justify-between">
                             <span class="text-[10px] font-bold uppercase tracking-wider theme-accent font-mascot">TV-kun</span>
                             <span id="mascotMoodEmoji" class="text-xs">📺</span>
@@ -468,7 +429,6 @@
                 </div>
             </div>
 
-            <!-- Right: Score Badge -->
             <div class="ml-2 flex-shrink-0 flex flex-col items-center">
                 <div id="scoreBadge" class="w-12 h-12 rounded-xl flex flex-col items-center justify-center font-extrabold shadow-inner transition-all duration-300 score-0">
                     <span id="scoreBadgeText" class="text-base leading-none">0</span>
@@ -478,30 +438,21 @@
             </div>
         </div>
 
-        <!-- Progress Bar Bar -->
         <div class="w-full bg-black/40 h-2.5 rounded-full overflow-hidden p-0.5 border border-white/10 mt-2">
             <div id="progressBar" class="h-full rounded-full transition-all duration-500 ease-out score-0" style="width: 0%;"></div>
         </div>
     </header>
 
-    <!-- Main Content Area -->
     <main class="flex-1 overflow-y-auto p-4 no-scrollbar pb-28 z-10">
-        
-        <!-- TASK VIEW -->
         <section id="taskView" class="tab-content space-y-4">
             <div>
                 <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider theme-text-muted px-1 mb-2">
                     <span>Main Daily Tasks (10)</span>
                     <span id="completionPercent">0%</span>
                 </div>
-
-                <!-- Core Task List Container -->
-                <div id="taskList" class="space-y-2.5">
-                    <!-- Dynamically populated 10 tasks -->
-                </div>
+                <div id="taskList" class="space-y-2.5"></div>
             </div>
 
-            <!-- ADDITIONAL TASKS SECTION -->
             <div class="pt-2 border-t border-white/10">
                 <div class="flex justify-between items-center text-xs font-semibold uppercase tracking-wider theme-text-muted px-1 mb-2.5">
                     <div class="flex items-center space-x-1.5">
@@ -510,15 +461,10 @@
                     </div>
                     <span id="additionalCountBadge" class="bg-white/10 text-slate-300 px-2 py-0.5 rounded-full text-[10px]">0 tasks</span>
                 </div>
-
-                <!-- Additional Tasks Container -->
-                <div id="additionalTaskList" class="space-y-2.5">
-                    <!-- Dynamically populated user tasks -->
-                </div>
+                <div id="additionalTaskList" class="space-y-2.5"></div>
             </div>
         </section>
 
-        <!-- CALENDAR VIEW -->
         <section id="calendarView" class="tab-content tab-hidden space-y-4">
             <div class="theme-bg-card rounded-2xl p-4 border shadow-lg">
                 <div class="flex justify-between items-center mb-4">
@@ -530,61 +476,45 @@
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                 </div>
-
-                <!-- Days Header -->
                 <div class="grid grid-cols-7 gap-1 text-center text-xs font-bold theme-text-muted mb-2">
                     <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
                 </div>
-
-                <!-- Days Grid -->
-                <div id="calendarGrid" class="grid grid-cols-7 gap-1.5">
-                    <!-- Dynamically populated -->
-                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1.5"></div>
             </div>
 
-            <!-- Color Scale Legend -->
             <div class="theme-bg-card rounded-2xl p-4 border space-y-2.5 shadow-lg">
                 <div class="text-xs font-bold theme-text-muted uppercase tracking-wider mb-1 flex justify-between items-center">
                     <span>Score Color Scale</span>
                     <span class="text-slate-400 font-normal">0 - Golden / Super Golden</span>
                 </div>
                 <div class="grid grid-cols-11 gap-1 text-center text-xs font-bold">
-                    <div class="score-0 rounded p-1" title="Red (0)">0</div>
-                    <div class="score-1 rounded p-1" title="Red Orange (1)">1</div>
-                    <div class="score-2 rounded p-1" title="Orange (2)">2</div>
-                    <div class="score-3 rounded p-1" title="Yellow (3)">3</div>
-                    <div class="score-4 rounded p-1" title="Lime Green (4)">4</div>
-                    <div class="score-5 rounded p-1" title="Green (5)">5</div>
-                    <div class="score-6 rounded p-1" title="Aqua Teal (6)">6</div>
-                    <div class="score-7 rounded p-1" title="Blue (7)">7</div>
-                    <div class="score-8 rounded p-1" title="Indigo (8)">8</div>
-                    <div class="score-9 rounded p-1" title="Purple (9)">9</div>
-                    <div class="golden-sparkle-prize rounded p-1" title="Golden Sparkle Prize (10 Tasks)">10</div>
-                </div>
-                <div class="flex justify-between text-[10px] theme-text-muted pt-1 font-medium">
-                    <span class="text-red-400">0: Red (Worst)</span>
-                    <span class="text-amber-300">10: Golden | 11+: Neon Sparkle Prize ✨</span>
+                    <div class="score-0 rounded p-1">0</div>
+                    <div class="score-1 rounded p-1">1</div>
+                    <div class="score-2 rounded p-1">2</div>
+                    <div class="score-3 rounded p-1">3</div>
+                    <div class="score-4 rounded p-1">4</div>
+                    <div class="score-5 rounded p-1">5</div>
+                    <div class="score-6 rounded p-1">6</div>
+                    <div class="score-7 rounded p-1">7</div>
+                    <div class="score-8 rounded p-1">8</div>
+                    <div class="score-9 rounded p-1">9</div>
+                    <div class="golden-sparkle-prize rounded p-1">10</div>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- Bottom Navigation Bar with Horizontal Pill '+' Add Task Button -->
     <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto theme-header backdrop-blur-lg border-t z-30 px-4 py-2">
         <div class="flex justify-around items-center">
-            <!-- Tasks Tab -->
             <button id="navTasks" class="flex flex-col items-center py-1 px-3 theme-accent font-bold transition-all duration-200">
                 <i class="fa-solid fa-list-check text-xl mb-1"></i>
                 <span class="text-xs">Tasks</span>
             </button>
 
-            <!-- '+' Add Task Pill-Shaped Button -->
-            <button id="navAddTaskBtn" class="flex items-center justify-center -mt-5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black w-18 h-12 rounded-full shadow-xl border-2 border-slate-900 active:scale-95 transition-all duration-200 px-4" title="Add Additional Task">
+            <button id="navAddTaskBtn" class="flex items-center justify-center -mt-5 bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-black w-18 h-12 rounded-full shadow-xl border-2 border-slate-900 active:scale-95 transition-all duration-200 px-4">
                 <i class="fa-solid fa-plus text-xl"></i>
             </button>
 
-            <!-- Calendar Tab -->
             <button id="navCalendar" class="flex flex-col items-center py-1 px-3 text-slate-400 font-medium hover:text-slate-200 transition-all duration-200">
                 <i class="fa-solid fa-calendar-days text-xl mb-1"></i>
                 <span class="text-xs">Calendar</span>
@@ -592,7 +522,127 @@
         </div>
     </nav>
 
-    <!-- Add Task Modal -->
+    <!-- SETTINGS & BACKUP MODAL -->
+    <div id="settingsModal" class="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="theme-bg-card w-full max-w-sm rounded-2xl p-5 border space-y-4 shadow-2xl max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-white/10 pb-3 flex-shrink-0">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-gear theme-accent text-lg"></i>
+                    <h3 class="font-bold text-base text-white">Settings & Data</h3>
+                </div>
+                <button id="closeSettingsBtn" class="text-slate-400 hover:text-white bg-white/5 p-1.5 rounded-full">
+                    <i class="fa-solid fa-xmark text-base"></i>
+                </button>
+            </div>
+
+            <div class="overflow-y-auto space-y-4 pr-1 no-scrollbar flex-1">
+                <!-- Section 1: Themes -->
+                <div>
+                    <div class="flex items-center space-x-1.5 mb-2.5">
+                        <i class="fa-solid fa-palette theme-accent text-xs"></i>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Themes</h4>
+                    </div>
+                    <div class="space-y-2">
+                        <button data-theme-id="kitsune" class="theme-option-btn w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.01] bg-stone-950/80 border-orange-500/40">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-xl">🦊</span>
+                                <div>
+                                    <div class="font-bold text-xs text-orange-200">Kitsune Fox</div>
+                                    <div class="text-[10px] text-orange-400/80">Warm Fox-Orange & Vermilion</div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-4 rounded-full border-2 border-orange-400 flex items-center justify-center">
+                                <div class="theme-check w-2 h-2 rounded-full bg-orange-400 hidden"></div>
+                            </div>
+                        </button>
+
+                        <button data-theme-id="temple" class="theme-option-btn w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.01] bg-stone-900/80 border-amber-600/40">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-xl">⛩️</span>
+                                <div>
+                                    <div class="font-bold text-xs text-amber-200">Japanese Temple</div>
+                                    <div class="text-[10px] text-emerald-400/80">Stone Gray, Torii & Moss Zen</div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-4 rounded-full border-2 border-amber-500 flex items-center justify-center">
+                                <div class="theme-check w-2 h-2 rounded-full bg-amber-500 hidden"></div>
+                            </div>
+                        </button>
+
+                        <button data-theme-id="sakura" class="theme-option-btn w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.01] bg-pink-950/60 border-pink-400/40">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-xl">🌸</span>
+                                <div>
+                                    <div class="font-bold text-xs text-pink-200">Sakura Season</div>
+                                    <div class="text-[10px] text-pink-300/80">Cherry Blossom Soft Pink</div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-4 rounded-full border-2 border-pink-400 flex items-center justify-center">
+                                <div class="theme-check w-2 h-2 rounded-full bg-pink-400 hidden"></div>
+                            </div>
+                        </button>
+
+                        <button data-theme-id="neon" class="theme-option-btn w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.01] bg-slate-950/80 border-cyan-400/40">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-xl">🏙️</span>
+                                <div>
+                                    <div class="font-bold text-xs text-cyan-200">Neon Tokyo</div>
+                                    <div class="text-[10px] text-fuchsia-400/80">Cyberpunk Magenta & Cyan</div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-4 rounded-full border-2 border-cyan-400 flex items-center justify-center">
+                                <div class="theme-check w-2 h-2 rounded-full bg-cyan-400 hidden"></div>
+                            </div>
+                        </button>
+
+                        <button data-theme-id="wave" class="theme-option-btn w-full p-2.5 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.01] bg-sky-950/80 border-sky-400/40">
+                            <div class="flex items-center space-x-2.5">
+                                <span class="text-xl">🌊</span>
+                                <div>
+                                    <div class="font-bold text-xs text-sky-200">Great Wave</div>
+                                    <div class="text-[10px] text-sky-300/80">Deep Ukiyo-e Ocean Blue</div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-4 rounded-full border-2 border-sky-400 flex items-center justify-center">
+                                <div class="theme-check w-2 h-2 rounded-full bg-sky-400 hidden"></div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 2: Backup & Data Management -->
+                <div class="border-t border-white/10 pt-3">
+                    <div class="flex items-center space-x-1.5 mb-2.5">
+                        <i class="fa-solid fa-floppy-disk theme-accent text-xs"></i>
+                        <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Backup & Data</h4>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <button id="exportBackupBtn" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs flex flex-col items-center justify-center space-y-1 transition shadow-sm">
+                            <i class="fa-solid fa-download text-amber-400 text-sm"></i>
+                            <span>Export Backup</span>
+                        </button>
+
+                        <label for="importFileInput" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-semibold text-xs flex flex-col items-center justify-center space-y-1 transition shadow-sm cursor-pointer text-center">
+                            <i class="fa-solid fa-upload text-sky-400 text-sm"></i>
+                            <span>Import Backup</span>
+                        </label>
+                        <input type="file" id="importFileInput" accept=".json" class="hidden">
+                    </div>
+
+                    <!-- Clear Data Option -->
+                    <div class="mt-3">
+                        <button id="clearDataBtn" class="w-full p-2.5 rounded-xl bg-red-950/40 hover:bg-red-900/60 border border-red-800/40 text-red-300 font-semibold text-xs flex items-center justify-center space-x-2 transition">
+                            <i class="fa-solid fa-trash-can text-red-400"></i>
+                            <span>Reset All Habit Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals: Add Task & Day Details -->
     <div id="addTaskModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="theme-bg-card w-full max-w-sm rounded-2xl p-5 border space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-white/10 pb-3">
@@ -604,13 +654,11 @@
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
             </div>
-
             <form id="addTaskForm" class="space-y-4">
                 <div>
                     <label for="taskInput" class="block text-xs font-semibold theme-text-muted mb-1">Task Title</label>
-                    <input type="text" id="taskInput" placeholder="e.g. Read 20 pages, Stretch, Meditate..." required maxlength="40" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition">
+                    <input type="text" id="taskInput" placeholder="e.g. Read 20 pages, Stretch..." required maxlength="40" class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 transition">
                 </div>
-
                 <div class="flex justify-end space-x-2 pt-2">
                     <button type="button" id="cancelAddTaskBtn" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-white/5 transition">Cancel</button>
                     <button type="submit" class="px-5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition shadow-md">Add Task</button>
@@ -619,95 +667,6 @@
         </div>
     </div>
 
-    <!-- Theme Selector Modal -->
-    <div id="themeModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="theme-bg-card w-full max-w-sm rounded-2xl p-5 border space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-white/10 pb-3">
-                <div class="flex items-center space-x-2">
-                    <i class="fa-solid fa-palette theme-accent text-lg"></i>
-                    <h3 class="font-bold text-base text-white">Select Japanese Theme</h3>
-                </div>
-                <button id="closeThemeBtn" class="text-slate-400 hover:text-white bg-white/5 p-1.5 rounded-full">
-                    <i class="fa-solid fa-xmark text-base"></i>
-                </button>
-            </div>
-
-            <!-- Theme Options -->
-            <div class="space-y-2.5">
-                <!-- 1. Kitsune -->
-                <button data-theme-id="kitsune" class="theme-option-btn w-full p-3 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.02] bg-stone-950/80 border-orange-500/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">🦊</span>
-                        <div>
-                            <div class="font-bold text-sm text-orange-200">Kitsune Fox</div>
-                            <div class="text-[11px] text-orange-400/80">Warm Fox-Orange & Vermilion</div>
-                        </div>
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-2 border-orange-400 flex items-center justify-center">
-                        <div class="theme-check w-2 h-2 rounded-full bg-orange-400"></div>
-                    </div>
-                </button>
-
-                <!-- 2. Japanese Temple -->
-                <button data-theme-id="temple" class="theme-option-btn w-full p-3 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.02] bg-stone-900/80 border-amber-600/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">⛩️</span>
-                        <div>
-                            <div class="font-bold text-sm text-amber-200">Japanese Temple</div>
-                            <div class="text-[11px] text-emerald-400/80">Stone Gray, Torii & Moss Zen</div>
-                        </div>
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-2 border-amber-500 flex items-center justify-center">
-                        <div class="theme-check w-2 h-2 rounded-full bg-amber-500"></div>
-                    </div>
-                </button>
-
-                <!-- 3. Sakura Season -->
-                <button data-theme-id="sakura" class="theme-option-btn w-full p-3 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.02] bg-pink-950/60 border-pink-400/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">🌸</span>
-                        <div>
-                            <div class="font-bold text-sm text-pink-200">Sakura Season</div>
-                            <div class="text-[11px] text-pink-300/80">Cherry Blossom Soft Pink</div>
-                        </div>
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-2 border-pink-400 flex items-center justify-center">
-                        <div class="theme-check w-2 h-2 rounded-full bg-pink-400"></div>
-                    </div>
-                </button>
-
-                <!-- 4. Neon Tokyo -->
-                <button data-theme-id="neon" class="theme-option-btn w-full p-3 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.02] bg-slate-950/80 border-cyan-400/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">🏙️</span>
-                        <div>
-                            <div class="font-bold text-sm text-cyan-200">Neon Tokyo</div>
-                            <div class="text-[11px] text-fuchsia-400/80">Cyberpunk Magenta & Cyan</div>
-                        </div>
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-2 border-cyan-400 flex items-center justify-center">
-                        <div class="theme-check w-2 h-2 rounded-full bg-cyan-400"></div>
-                    </div>
-                </button>
-
-                <!-- 5. Great Wave -->
-                <button data-theme-id="wave" class="theme-option-btn w-full p-3 rounded-xl border flex items-center justify-between text-left transition hover:scale-[1.02] bg-sky-950/80 border-sky-400/40">
-                    <div class="flex items-center space-x-3">
-                        <span class="text-2xl">🌊</span>
-                        <div>
-                            <div class="font-bold text-sm text-sky-200">Great Wave</div>
-                            <div class="text-[11px] text-sky-300/80">Deep Ukiyo-e Ocean Blue</div>
-                        </div>
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-2 border-sky-400 flex items-center justify-center">
-                        <div class="theme-check w-2 h-2 rounded-full bg-sky-400"></div>
-                    </div>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Day Details Modal -->
     <div id="dayModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 opacity-0 pointer-events-none transition-opacity duration-300">
         <div class="theme-bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 border space-y-4 max-h-[80vh] flex flex-col shadow-2xl">
             <div class="flex justify-between items-center border-b border-white/10 pb-3">
@@ -719,182 +678,125 @@
                     <i class="fa-solid fa-xmark text-base"></i>
                 </button>
             </div>
-
-            <div id="modalTasksList" class="overflow-y-auto space-y-2 flex-1 pr-1 no-scrollbar">
-                <!-- Modal task items -->
-            </div>
-
-            <button id="modalEditBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg">
-                Jump to Date & Edit Habits
-            </button>
+            <div id="modalTasksList" class="overflow-y-auto space-y-2 flex-1 pr-1 no-scrollbar"></div>
+            <button id="modalEditBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl transition shadow-lg">Jump to Date & Edit Habits</button>
         </div>
     </div>
 
-    <!-- JavaScript Application Logic -->
+    <!-- Application Script -->
     <script>
-        // 10 Preset Core Tasks
-        const TASKS = [
-            { id: 1, title: 'Japanese Workbook', icon: 'fa-book-open' },
-            { id: 2, title: 'Skin care', icon: 'fa-pump-soap' },
-            { id: 3, title: '2 Stanleys of Water', icon: 'fa-glass-water' },
-            { id: 4, title: 'Work out', icon: 'fa-dumbbell' },
-            { id: 5, title: 'Fun Activity', icon: 'fa-gamepad' },
-            { id: 6, title: 'Art', icon: 'fa-palette' },
-            { id: 7, title: 'Shower', icon: 'fa-shower' },
-            { id: 8, title: 'Check Social Media', icon: 'fa-hashtag' },
-            { id: 9, title: 'Kanji Flash cards', icon: 'fa-clone' },
-            { id: 10, title: 'Drink Tea', icon: 'fa-mug-hot' }
+        // Exact 10 Core Daily Tasks from index2.html
+        const DEFAULT_TASKS = [
+            { id: 1, text: "Japanese Workbook", icon: "fa-book-open" },
+            { id: 2, text: "Skin care", icon: "fa-pump-soap" },
+            { id: 3, text: "2 Stanleys of Water", icon: "fa-glass-water" },
+            { id: 4, text: "Work out", icon: "fa-dumbbell" },
+            { id: 5, text: "Fun Activity", icon: "fa-gamepad" },
+            { id: 6, text: "Art", icon: "fa-palette" },
+            { id: 7, text: "Shower", icon: "fa-shower" },
+            { id: 8, text: "Check Social Media", icon: "fa-hashtag" },
+            { id: 9, text: "Kanji Flash cards", icon: "fa-clone" },
+            { id: 10, text: "Drink Tea", icon: "fa-mug-hot" }
         ];
 
-        // Themes Configuration
-        const THEMES = {
-            kitsune: { name: 'Kitsune Fox', icon: '🦊' },
-            temple: { name: 'Japanese Temple', icon: '⛩️' },
-            sakura: { name: 'Sakura Season', icon: '🌸' },
-            neon: { name: 'Neon Tokyo', icon: '🏙️' },
-            wave: { name: 'Great Wave', icon: '🌊' }
+        // TV-kun Mascot Dialogues
+        const MASCOT_DIALOGUES = {
+            low: [
+                "Every small step counts! Let's complete one task today!",
+                "Ganbatte! (Do your best!) Don't worry about yesterday.",
+                "Starting is the hardest part. You've got this!",
+                "A fresh journey begins with a single checkmark!"
+            ],
+            mid: [
+                "Nice momentum! Keep pushing through!",
+                "You're building great habits step by step!",
+                "Halfway there! TV-kun is cheering for you!",
+                "Great work! Your discipline is paying off!"
+            ],
+            high: [
+                "Awesome job! You are on fire today!",
+                "Sugoi! Almost reached perfection!",
+                "Fantastic score! Keep that streak glowing!",
+                "You are unstoppable today!"
+            ],
+            perfect: [
+                "SUGOI! 10/10 PERFECT DAY STAR PRIZE! 🌟",
+                "GOLDEN CHAMPION! TV-kun is super proud!",
+                "PERFECT MASTERY! Sparkling golden energy for you!",
+                "10 OUT OF 10! You conquered the day completely!"
+            ],
+            super: [
+                "SUPER GOLDEN OVERACHIEVER! 🚀✨ YOU ARE BEYOND PERFECT!",
+                "LEGENDARY! Extra tasks completed! TV-kun is mind-blown! 💥",
+                "ULTIMATE MASTERY LEVEL UNLOCKED! Pure brilliance!"
+            ]
         };
 
-        // Score to Class map
-        const COLOR_CLASSES = {
-            0: 'score-0', 1: 'score-1', 2: 'score-2', 3: 'score-3', 4: 'score-4',
-            5: 'score-5', 6: 'score-6', 7: 'score-7', 8: 'score-8', 9: 'score-9', 10: 'score-10'
-        };
+        // State variables
+        let currentDate = new Date();
+        let currentCalendarDate = new Date();
+        let habitData = JSON.parse(localStorage.getItem('habitData_v3')) || {};
+        let currentTheme = localStorage.getItem('habitTheme_v3') || 'kitsune';
+        let modalSelectedDateStr = '';
 
-        // TV-kun Compliments Pool (Expanded with 30+ Encouraging Lines)
-        const COMPLIMENTS = [
-            "Sugoi! You checked off another one!",
-            "Great job! Keep the momentum going!",
-            "Subarashii! Every step counts!",
-            "You're doing fantastic today!",
-            "One step closer to greatness!",
-            "Stay awesome! TV-kun believes in you!",
-            "Ganbatte! Look at you go!",
-            "Yatta! Awesome habit completed!",
-            "Step by step, custom by custom—you're crafting a masterpiece!",
-            "Your future self is high-fiving you right now!",
-            "Leveling up in real life! Keep it up!",
-            "Look at that streak shine!",
-            "Small habits, massive victories!",
-            "You're making this look easy!",
-            "Consistency is your superpower!",
-            "TV-kun is beaming with pride!",
-            "Another task bites the dust!",
-            "You're on absolute fire today!",
-            "Habit champion in action!",
-            "Focus level: 100%! Great work!",
-            "Nothing can stop you today!",
-            "Boom! Cross that off the list!",
-            "You're building something incredible!",
-            "Sensational progress! Keep going!",
-            "Pure dedication right here!",
-            "Every check mark is a victory!",
-            "Channeling true samurai discipline!",
-            "Look at you smashing those goals!",
-            "TV-kun's signal is 100% positive!",
-            "That's how habit legends are made!",
-            "Effort today, triumph tomorrow!",
-            "You've got the spirit of a warrior!",
-            "Fantastic work! TV-kun loves seeing this!",
-            "Step by step, you're unstoppable!",
-            "Pure excellence on display!",
-            "Keep tuning in to success!"
-        ];
-
-        const TOUCH_DIALOGUES = [
-            "Bzzzt! I'm TV-kun, your habit mascot!",
-            "Keep tuning in to your daily goals!",
-            "You've got this! Perfect those tasks!",
-            "Press my screen? Hehe! Stay focused!",
-            "Sugoi! Happy to be here with you!",
-            "Let's make today completely golden!",
-            "Tune into productivity frequency!"
-        ];
-
-        // Application State
-        let selectedDate = new Date();
-        let calendarDate = new Date();
-        let habitData = {}; 
-        let currentTheme = 'kitsune';
-
-        // Local Storage Keys
-        const STORAGE_DATA_KEY = 'daily_habit_tracker_data_v3';
-        const STORAGE_THEME_KEY = 'daily_habit_tracker_theme_v3';
-
-        // DOM Elements
+        // DOM elements
         const currentDateDisplay = document.getElementById('currentDateDisplay');
         const prevDateBtn = document.getElementById('prevDateBtn');
         const nextDateBtn = document.getElementById('nextDateBtn');
         const todayBtn = document.getElementById('todayBtn');
-
+        
+        const taskList = document.getElementById('taskList');
+        const additionalTaskList = document.getElementById('additionalTaskList');
+        const additionalCountBadge = document.getElementById('additionalCountBadge');
         const scoreBadge = document.getElementById('scoreBadge');
         const scoreBadgeText = document.getElementById('scoreBadgeText');
         const scoreBadgeMax = document.getElementById('scoreBadgeMax');
         const progressBar = document.getElementById('progressBar');
         const completionPercent = document.getElementById('completionPercent');
-        
-        const taskList = document.getElementById('taskList');
-        const additionalTaskList = document.getElementById('additionalTaskList');
-        const additionalCountBadge = document.getElementById('additionalCountBadge');
 
-        const taskView = document.getElementById('taskView');
-        const calendarView = document.getElementById('calendarView');
-        const navTasks = document.getElementById('navTasks');
-        const navCalendar = document.getElementById('navCalendar');
-        const navAddTaskBtn = document.getElementById('navAddTaskBtn');
-
-        const calendarGrid = document.getElementById('calendarGrid');
-        const calendarMonthLabel = document.getElementById('calendarMonthLabel');
-        const prevMonthBtn = document.getElementById('prevMonthBtn');
-        const nextMonthBtn = document.getElementById('nextMonthBtn');
-
-        const themeModalBtn = document.getElementById('themeModalBtn');
-        const themeModal = document.getElementById('themeModal');
-        const closeThemeBtn = document.getElementById('closeThemeBtn');
-        const currentThemeLabel = document.getElementById('currentThemeLabel');
-
-        const addTaskModal = document.getElementById('addTaskModal');
-        const closeAddTaskBtn = document.getElementById('closeAddTaskBtn');
-        const cancelAddTaskBtn = document.getElementById('cancelAddTaskBtn');
-        const addTaskForm = document.getElementById('addTaskForm');
-        const taskInput = document.getElementById('taskInput');
-
-        const dayModal = document.getElementById('dayModal');
-        const modalDate = document.getElementById('modalDate');
-        const modalScoreText = document.getElementById('modalScoreText');
-        const modalTasksList = document.getElementById('modalTasksList');
-        const modalEditBtn = document.getElementById('modalEditBtn');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-
-        // TV-kun Elements
-        const tvMascotContainer = document.getElementById('tvMascotContainer');
-        const speechBubble = document.getElementById('speechBubble');
         const mascotDialogue = document.getElementById('mascotDialogue');
         const mascotMoodEmoji = document.getElementById('mascotMoodEmoji');
+        const tvMascotContainer = document.getElementById('tvMascotContainer');
         const tvMouth = document.getElementById('tvMouth');
         const tvEyeLeft = document.getElementById('tvEyeLeft');
         const tvEyeRight = document.getElementById('tvEyeRight');
 
-        let activeModalDateStr = null;
+        const navTasks = document.getElementById('navTasks');
+        const navCalendar = document.getElementById('navCalendar');
+        const navAddTaskBtn = document.getElementById('navAddTaskBtn');
+        const taskView = document.getElementById('taskView');
+        const calendarView = document.getElementById('calendarView');
 
-        // Haptic Feedback Engine
-        function triggerHaptic(type = 'tap') {
-            if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
-                try {
-                    if (type === 'tap') {
-                        navigator.vibrate(20); // Subtle 20ms tap
-                    } else if (type === 'celebrate') {
-                        navigator.vibrate([40, 60, 40, 60, 80]); // Rhythmic celebratory pulse
-                    } else if (type === 'super') {
-                        navigator.vibrate([30, 40, 50, 40, 60, 40, 100]); // Intense overachiever pulse
-                    }
-                } catch (e) {
-                    // Soft fallback for unallowed contexts
-                }
-            }
-        }
+        const calendarMonthLabel = document.getElementById('calendarMonthLabel');
+        const calendarGrid = document.getElementById('calendarGrid');
+        const prevMonthBtn = document.getElementById('prevMonthBtn');
+        const nextMonthBtn = document.getElementById('nextMonthBtn');
 
-        // Date Helpers
+        // Settings Modal Elements
+        const settingsModalBtn = document.getElementById('settingsModalBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettingsBtn = document.getElementById('closeSettingsBtn');
+        const themeOptionBtns = document.querySelectorAll('.theme-option-btn');
+        const exportBackupBtn = document.getElementById('exportBackupBtn');
+        const importFileInput = document.getElementById('importFileInput');
+        const clearDataBtn = document.getElementById('clearDataBtn');
+
+        // Add Task Modal Elements
+        const addTaskModal = document.getElementById('addTaskModal');
+        const addTaskForm = document.getElementById('addTaskForm');
+        const taskInput = document.getElementById('taskInput');
+        const closeAddTaskBtn = document.getElementById('closeAddTaskBtn');
+        const cancelAddTaskBtn = document.getElementById('cancelAddTaskBtn');
+
+        // Day Modal Elements
+        const dayModal = document.getElementById('dayModal');
+        const modalDate = document.getElementById('modalDate');
+        const modalScoreText = document.getElementById('modalScoreText');
+        const modalTasksList = document.getElementById('modalTasksList');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalEditBtn = document.getElementById('modalEditBtn');
+
+        // Helper Functions
         function formatDateKey(date) {
             const y = date.getFullYear();
             const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -902,495 +804,377 @@
             return `${y}-${m}-${d}`;
         }
 
-        function formatDateDisplay(date) {
-            return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+        function formatDisplayDate(date) {
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            return date.toLocaleDateString('en-US', options);
         }
 
-        // Persistence Loaders
-        function loadStorage() {
-            try {
-                const storedData = localStorage.getItem(STORAGE_DATA_KEY);
-                if (storedData) habitData = JSON.parse(storedData);
-
-                const storedTheme = localStorage.getItem(STORAGE_THEME_KEY);
-                if (storedTheme && THEMES[storedTheme]) {
-                    currentTheme = storedTheme;
-                }
-            } catch (e) {
-                console.error("Storage load error", e);
+        function triggerHaptic() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(35);
             }
         }
 
-        function saveData() {
-            try {
-                localStorage.setItem(STORAGE_DATA_KEY, JSON.stringify(habitData));
-            } catch (e) {
-                console.error("Storage save error", e);
-            }
+        function saveState() {
+            localStorage.setItem('habitData_v3', JSON.stringify(habitData));
+            localStorage.setItem('habitTheme_v3', currentTheme);
         }
 
-        function saveTheme() {
-            try {
-                localStorage.setItem(STORAGE_THEME_KEY, currentTheme);
-            } catch (e) {
-                console.error("Theme save error", e);
-            }
-        }
-
-        function ensureDateEntry(dateKey) {
-            if (!habitData[dateKey]) {
-                habitData[dateKey] = {
-                    completedCore: [],
-                    additionalTasks: []
-                };
-            } else if (Array.isArray(habitData[dateKey])) {
-                habitData[dateKey] = {
-                    completedCore: habitData[dateKey],
-                    additionalTasks: []
-                };
-            }
-        }
-
-        // Calculate score for a date
-        function getDayStats(dateKey) {
-            if (!habitData[dateKey]) {
-                return { completed: 0, total: 10, isPerfect: false, isSuperPerfect: false, colorIndex: 0 };
-            }
-
-            ensureDateEntry(dateKey);
-            const entry = habitData[dateKey];
-            const completedCoreCount = entry.completedCore ? entry.completedCore.length : 0;
-            const additionalList = entry.additionalTasks || [];
-            const completedAdditionalCount = additionalList.filter(t => t.completed).length;
-
-            const totalCompleted = completedCoreCount + completedAdditionalCount;
-            const totalTasks = 10 + additionalList.length;
-
-            // Day is perfect if completed tasks >= 10
-            const isPerfect = totalCompleted >= 10;
-            // Super perfect prize day if completed >= 11 tasks
-            const isSuperPerfect = totalCompleted >= 11;
-
-            let colorIndex = Math.min(10, Math.floor((totalCompleted / Math.max(10, totalTasks)) * 10));
-            if (isPerfect) colorIndex = 10;
-
-            return {
-                completed: totalCompleted,
-                total: totalTasks,
-                completedCore: completedCoreCount,
-                completedAdditional: completedAdditionalCount,
-                additionalTotal: additionalList.length,
-                isPerfect,
-                isSuperPerfect,
-                colorIndex
-            };
-        }
-
-        // Apply Selected Theme
+        // Apply Theme
         function applyTheme(themeId) {
-            if (!THEMES[themeId]) return;
             currentTheme = themeId;
             document.documentElement.setAttribute('data-theme', themeId);
-            currentThemeLabel.textContent = THEMES[themeId].name.split(' ')[0];
-
-            document.querySelectorAll('.theme-option-btn').forEach(btn => {
-                const isSelected = btn.getAttribute('data-theme-id') === themeId;
-                btn.style.opacity = isSelected ? '1' : '0.6';
+            
+            // Update settings theme checkmarks
+            themeOptionBtns.forEach(btn => {
                 const check = btn.querySelector('.theme-check');
-                if (check) check.style.display = isSelected ? 'block' : 'none';
+                if (btn.getAttribute('data-theme-id') === themeId) {
+                    check.classList.remove('hidden');
+                } else {
+                    check.classList.add('hidden');
+                }
             });
 
-            saveTheme();
+            saveState();
         }
 
-        // Trigger TV-kun Speech and Facial Expressions
-        function setMascotReaction(message, moodEmoji = '📺', isPerfect = false, isBounce = true) {
-            mascotDialogue.textContent = message;
-            mascotMoodEmoji.textContent = moodEmoji;
+        function getDayData(dateStr) {
+            if (!habitData[dateStr]) {
+                habitData[dateStr] = {
+                    tasks: DEFAULT_TASKS.map(t => ({ ...t, completed: false })),
+                    additionalTasks: []
+                };
+            } else {
+                if (!habitData[dateStr].tasks || habitData[dateStr].tasks.length !== 10) {
+                    const existing = habitData[dateStr].tasks || [];
+                    habitData[dateStr].tasks = DEFAULT_TASKS.map(t => {
+                        const found = existing.find(e => e.id === t.id || e.text === t.text);
+                        return found ? { ...t, completed: found.completed } : { ...t, completed: false };
+                    });
+                }
+                if (!habitData[dateStr].additionalTasks) {
+                    habitData[dateStr].additionalTasks = [];
+                }
+            }
+            return habitData[dateStr];
+        }
 
+        // TV-kun Animation & Face Expressions
+        function updateTVMascot(score, totalMainCount = 10, totalScore = 0) {
+            const container = tvMascotContainer;
+            container.classList.remove('tv-bouncing', 'tv-perfect');
+
+            if (totalScore > 10) {
+                tvMouth.setAttribute('d', 'M 30 52 Q 44 72 58 52 Z');
+                tvEyeLeft.setAttribute('r', '4');
+                tvEyeRight.setAttribute('r', '4');
+                mascotMoodEmoji.textContent = '🚀';
+                container.classList.add('tv-perfect');
+            } else if (score === 10) {
+                tvMouth.setAttribute('d', 'M 32 54 Q 44 68 56 54');
+                tvEyeLeft.setAttribute('r', '4.5');
+                tvEyeRight.setAttribute('r', '4.5');
+                mascotMoodEmoji.textContent = '🌟';
+                container.classList.add('tv-perfect');
+            } else if (score >= 7) {
+                tvMouth.setAttribute('d', 'M 33 55 Q 44 64 55 55');
+                tvEyeLeft.setAttribute('r', '3.5');
+                tvEyeRight.setAttribute('r', '3.5');
+                mascotMoodEmoji.textContent = '🔥';
+            } else if (score >= 4) {
+                tvMouth.setAttribute('d', 'M 35 56 Q 44 60 53 56');
+                tvEyeLeft.setAttribute('r', '3');
+                tvEyeRight.setAttribute('r', '3');
+                mascotMoodEmoji.textContent = '😊';
+            } else {
+                tvMouth.setAttribute('d', 'M 36 58 Q 44 55 52 58');
+                tvEyeLeft.setAttribute('r', '3');
+                tvEyeRight.setAttribute('r', '3');
+                mascotMoodEmoji.textContent = '📺';
+            }
+        }
+
+        function setRandomMascotDialogue(score, isSuper = false) {
+            let category = 'low';
+            if (isSuper) category = 'super';
+            else if (score === 10) category = 'perfect';
+            else if (score >= 7) category = 'high';
+            else if (score >= 4) category = 'mid';
+
+            const arr = MASCOT_DIALOGUES[category];
+            const randomIndex = Math.floor(Math.random() * arr.length);
+            mascotDialogue.textContent = arr[randomIndex];
+
+            const speechBubble = document.getElementById('speechBubble');
             speechBubble.classList.remove('speech-animated');
             void speechBubble.offsetWidth;
             speechBubble.classList.add('speech-animated');
-
-            tvMascotContainer.classList.remove('tv-bouncing', 'tv-perfect');
-            
-            if (isPerfect) {
-                tvMascotContainer.classList.add('tv-perfect');
-                tvMouth.setAttribute('d', 'M 30 52 Q 44 68 58 52 Z');
-                tvMouth.setAttribute('fill', '#facc15');
-                tvEyeLeft.setAttribute('r', '4');
-                tvEyeRight.setAttribute('r', '4');
-            } else if (isBounce) {
-                tvMascotContainer.classList.add('tv-bouncing');
-                tvMouth.setAttribute('d', 'M 33 55 Q 44 64 55 55');
-                tvMouth.setAttribute('fill', 'none');
-                tvEyeLeft.setAttribute('r', '3.5');
-                tvEyeRight.setAttribute('r', '3.5');
-            }
         }
 
-        // Confetti Celebration
-        function triggerConfetti() {
+        function fireConfetti() {
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 120,
-                    spread: 80,
+                    particleCount: 80,
+                    spread: 70,
                     origin: { y: 0.6 },
-                    colors: ['#FFD700', '#FFA751', '#38bdf8', '#f472b6', '#34d399', '#FF007F', '#00F0FF']
+                    colors: ['#FFE259', '#FFA751', '#FF007F', '#00F0FF', '#ffffff']
                 });
             }
         }
 
-        // Update Header and TV Mascot
-        function updateHeaderUI(isTaskToggled = false, wasAdded = false) {
-            const dateKey = formatDateKey(selectedDate);
-            const stats = getDayStats(dateKey);
-            const percentage = Math.round((stats.completed / Math.max(stats.total, 10)) * 100);
+        // Core Render Function
+        function renderCurrentDateView() {
+            const dateStr = formatDateKey(currentDate);
+            currentDateDisplay.textContent = formatDisplayDate(currentDate);
 
-            currentDateDisplay.textContent = formatDateDisplay(selectedDate);
+            const dayData = getDayData(dateStr);
+            const mainTasks = dayData.tasks;
+            const additionalTasks = dayData.additionalTasks;
 
-            const todayStr = formatDateKey(new Date());
-            if (dateKey === todayStr) {
-                todayBtn.classList.remove('opacity-40');
-                todayBtn.textContent = 'Today';
-            } else {
-                todayBtn.classList.add('opacity-40');
-                todayBtn.textContent = 'Jump Today';
-            }
+            const mainCompletedCount = mainTasks.filter(t => t.completed).length;
+            const addCompletedCount = additionalTasks.filter(t => t.completed).length;
+            const totalScore = mainCompletedCount + addCompletedCount;
 
-            scoreBadgeText.textContent = stats.completed;
-            scoreBadgeMax.textContent = `/${Math.max(stats.total, 10)}`;
-
-            if (stats.isSuperPerfect) {
-                scoreBadge.className = `w-12 h-12 rounded-xl flex flex-col items-center justify-center font-extrabold shadow-inner transition-all duration-300 super-golden-prize`;
-            } else if (stats.isPerfect) {
-                scoreBadge.className = `w-12 h-12 rounded-xl flex flex-col items-center justify-center font-extrabold shadow-inner transition-all duration-300 golden-sparkle-prize`;
-            } else {
-                scoreBadge.className = `w-12 h-12 rounded-xl flex flex-col items-center justify-center font-extrabold shadow-inner transition-all duration-300 ${COLOR_CLASSES[stats.colorIndex]}`;
-            }
-
-            completionPercent.textContent = `${percentage}%`;
-
-            progressBar.style.width = `${Math.min(100, percentage)}%`;
-            progressBar.className = `h-full rounded-full transition-all duration-500 ease-out ${
-                stats.isSuperPerfect 
-                    ? 'super-golden-prize' 
-                    : (stats.isPerfect ? 'golden-sparkle-prize' : COLOR_CLASSES[stats.colorIndex])
-            }`;
-
-            // Mascot Speeches
-            if (stats.isSuperPerfect) {
-                setMascotReaction("SUPER AMAZING! Overachiever Mode Activated! ✨⚡", "🌟", true);
-                if (isTaskToggled && wasAdded) {
-                    triggerHaptic('super');
-                    triggerConfetti();
-                }
-            } else if (stats.isPerfect) {
-                setMascotReaction("Amazing! Perfect Day Achieved! ✨🎉", "🌟", true);
-                if (isTaskToggled && wasAdded) {
-                    triggerHaptic('celebrate');
-                    triggerConfetti();
-                }
-            } else if (isTaskToggled) {
-                if (wasAdded) {
-                    triggerHaptic('tap');
-                    const randomCompliment = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
-                    setMascotReaction(randomCompliment, "✨", false, true);
-                } else {
-                    triggerHaptic('tap');
-                    setMascotReaction("No worries! We can always try again!", "💪", false, false);
-                }
-            } else {
-                if (stats.completed === 0) {
-                    setMascotReaction("Let's get started! Pick a task to check off!", "📺", false, false);
-                } else {
-                    setMascotReaction(`Great effort! ${stats.completed} task${stats.completed === 1 ? '' : 's'} completed!`, "🔥", false, false);
-                }
-            }
-        }
-
-        // Render Task View
-        function renderTaskView(isTaskToggled = false, wasAdded = false) {
-            updateHeaderUI(isTaskToggled, wasAdded);
-            const dateKey = formatDateKey(selectedDate);
-            ensureDateEntry(dateKey);
-
-            const entry = habitData[dateKey];
-            const completedCore = entry.completedCore || [];
-            const additionalTasks = entry.additionalTasks || [];
-
-            // 1. Core Tasks Render
+            // Render Task List
             taskList.innerHTML = '';
-            TASKS.forEach(task => {
-                const isChecked = completedCore.includes(task.id);
-
-                const card = document.createElement('div');
-                card.className = `theme-bg-card p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between cursor-pointer ${
-                    isChecked ? 'shadow-md border-emerald-500/40' : 'opacity-85 hover:opacity-100'
-                }`;
-
-                card.innerHTML = `
-                    <div class="flex items-center space-x-3.5">
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center ${
-                            isChecked ? 'bg-emerald-500/20 theme-accent' : 'bg-white/5 text-slate-400'
-                        }">
-                            <i class="fa-solid ${task.icon} text-base"></i>
+            mainTasks.forEach((task) => {
+                const taskCard = document.createElement('div');
+                taskCard.className = `theme-bg-card p-3 rounded-2xl border flex items-center justify-between transition-all duration-200 cursor-pointer active:scale-[0.99] ${task.completed ? 'bg-emerald-950/20 border-emerald-500/40' : ''}`;
+                taskCard.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm ${task.completed ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-white/5 text-slate-300'}">
+                            <i class="fa-solid ${task.icon}"></i>
                         </div>
-                        <span class="font-semibold text-sm ${isChecked ? 'text-white' : 'text-slate-300'}">
-                            ${task.title}
-                        </span>
+                        <span class="text-xs font-bold ${task.completed ? 'line-through text-slate-400' : 'text-white'}">${task.text}</span>
                     </div>
-                    <div class="w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all ${
-                        isChecked 
-                            ? 'bg-emerald-500 border-emerald-400 text-white shadow-sm' 
-                            : 'border-slate-600 bg-white/5 text-transparent'
-                    }">
-                        <i class="fa-solid fa-check text-xs"></i>
+                    <div class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${task.completed ? 'bg-emerald-500 border-emerald-500 text-slate-950' : 'border-slate-600 bg-black/20'}">
+                        ${task.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
                     </div>
                 `;
-
-                card.addEventListener('click', () => toggleCoreTask(task.id));
-                taskList.appendChild(card);
+                taskCard.addEventListener('click', () => toggleMainTask(task.id));
+                taskList.appendChild(taskCard);
             });
 
-            // 2. Additional Tasks Render
+            // Render Additional Tasks List
             additionalTaskList.innerHTML = '';
-            additionalCountBadge.textContent = `${additionalTasks.length} ${additionalTasks.length === 1 ? 'task' : 'tasks'}`;
+            additionalCountBadge.textContent = `${additionalTasks.length} task${additionalTasks.length === 1 ? '' : 's'}`;
 
             if (additionalTasks.length === 0) {
                 additionalTaskList.innerHTML = `
-                    <div class="text-center py-4 px-2 border border-dashed border-white/10 rounded-2xl theme-text-muted text-xs">
-                        <p class="mb-1">No additional tasks for this day.</p>
-                        <p class="text-[10px] text-slate-500">Tap the <span class="text-amber-400 font-bold">+</span> button below to add custom goals!</p>
+                    <div class="text-center py-4 px-2 rounded-2xl border border-dashed border-slate-700/60 bg-black/10">
+                        <p class="text-xs text-slate-400">No additional tasks for today.</p>
+                        <p class="text-[10px] text-slate-500 mt-0.5">Tap the <strong>+</strong> button below to create one!</p>
                     </div>
                 `;
             } else {
-                additionalTasks.forEach(task => {
-                    const isChecked = task.completed;
-                    const card = document.createElement('div');
-                    card.className = `theme-bg-card p-3.5 rounded-2xl border transition-all duration-200 flex items-center justify-between ${
-                        isChecked ? 'shadow-md border-emerald-500/40' : 'opacity-85 hover:opacity-100'
-                    }`;
-
-                    card.innerHTML = `
-                        <div class="flex items-center space-x-3 flex-1 mr-2 cursor-pointer" id="add-task-item-${task.id}">
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center ${
-                                isChecked ? 'bg-emerald-500/20 text-emerald-400' : 'bg-white/5 text-amber-400'
-                            }">
-                                <i class="fa-solid fa-star text-sm"></i>
+                additionalTasks.forEach((task, index) => {
+                    const addCard = document.createElement('div');
+                    addCard.className = `theme-bg-card p-3 rounded-2xl border flex items-center justify-between transition-all duration-200 ${task.completed ? 'bg-emerald-950/20 border-emerald-500/40' : ''}`;
+                    addCard.innerHTML = `
+                        <div class="flex items-center space-x-3 flex-1 min-w-0 cursor-pointer" id="addCheck_${index}">
+                            <div class="w-8 h-8 rounded-xl flex items-center justify-center text-sm ${task.completed ? 'bg-emerald-500 text-slate-950 font-bold' : 'bg-amber-500/10 text-amber-400'}">
+                                <i class="fa-solid fa-star"></i>
                             </div>
-                            <span class="font-semibold text-sm ${isChecked ? 'line-through text-slate-400' : 'text-white'}">
-                                ${escapeHtml(task.title)}
-                            </span>
+                            <span class="text-xs font-bold truncate ${task.completed ? 'line-through text-slate-400' : 'text-white'}">${task.text}</span>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <button class="delete-add-task p-2 text-slate-500 hover:text-red-400 transition" title="Delete Task">
-                                <i class="fa-solid fa-trash-can text-sm"></i>
-                            </button>
-                            <div class="toggle-add-task w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer ${
-                                isChecked 
-                                    ? 'bg-emerald-500 border-emerald-400 text-white shadow-sm' 
-                                    : 'border-slate-600 bg-white/5 text-transparent'
-                            }">
-                                <i class="fa-solid fa-check text-xs"></i>
+                            <div id="addCheckBtn_${index}" class="w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer ${task.completed ? 'bg-emerald-500 border-emerald-500 text-slate-950' : 'border-slate-600 bg-black/20'}">
+                                ${task.completed ? '<i class="fa-solid fa-check text-xs"></i>' : ''}
                             </div>
+                            <button class="delete-add-btn text-slate-500 hover:text-red-400 p-1 transition" data-index="${index}">
+                                <i class="fa-solid fa-trash-can text-xs"></i>
+                            </button>
                         </div>
                     `;
+                    additionalTaskList.appendChild(addCard);
 
-                    // Toggle click events
-                    card.querySelector(`#add-task-item-${task.id}`).addEventListener('click', () => toggleAdditionalTask(task.id));
-                    card.querySelector('.toggle-add-task').addEventListener('click', () => toggleAdditionalTask(task.id));
-                    
-                    // Delete event
-                    card.querySelector('.delete-add-task').addEventListener('click', (e) => {
+                    document.getElementById(`addCheck_${index}`).addEventListener('click', () => toggleAdditionalTask(index));
+                    document.getElementById(`addCheckBtn_${index}`).addEventListener('click', () => toggleAdditionalTask(index));
+                });
+
+                document.querySelectorAll('.delete-add-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        deleteAdditionalTask(task.id);
+                        const idx = parseInt(btn.getAttribute('data-index'));
+                        deleteAdditionalTask(idx);
                     });
-
-                    additionalTaskList.appendChild(card);
                 });
             }
-        }
 
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-        }
-
-        // Core Task Toggle
-        function toggleCoreTask(taskId) {
-            const dateKey = formatDateKey(selectedDate);
-            ensureDateEntry(dateKey);
-
-            const completed = habitData[dateKey].completedCore;
-            const index = completed.indexOf(taskId);
-            let wasAdded = false;
-
-            if (index > -1) {
-                completed.splice(index, 1);
-                wasAdded = false;
+            // Update Score & Badges
+            scoreBadgeText.textContent = mainCompletedCount;
+            if (totalScore > 10) {
+                scoreBadgeMax.textContent = `+${addCompletedCount}`;
             } else {
-                completed.push(taskId);
-                wasAdded = true;
+                scoreBadgeMax.textContent = '/10';
             }
 
-            saveData();
-            renderTaskView(true, wasAdded);
+            // Clean score classes
+            scoreBadge.className = 'w-12 h-12 rounded-xl flex flex-col items-center justify-center font-extrabold shadow-inner transition-all duration-300 ';
+            progressBar.className = 'h-full rounded-full transition-all duration-500 ease-out ';
+
+            if (totalScore > 10) {
+                scoreBadge.classList.add('super-golden-prize');
+                progressBar.classList.add('super-golden-prize');
+            } else if (mainCompletedCount === 10) {
+                scoreBadge.classList.add('golden-sparkle-prize');
+                progressBar.classList.add('golden-sparkle-prize');
+            } else {
+                scoreBadge.classList.add(`score-${mainCompletedCount}`);
+                progressBar.classList.add(`score-${mainCompletedCount}`);
+            }
+
+            const pct = Math.min(100, Math.round((mainCompletedCount / 10) * 100));
+            progressBar.style.width = `${pct}%`;
+            completionPercent.textContent = `${pct}%`;
+
+            updateTVMascot(mainCompletedCount, 10, totalScore);
+            setRandomMascotDialogue(mainCompletedCount, totalScore > 10);
+            renderCalendar();
         }
 
-        // Additional Task Actions
-        function addAdditionalTask(title) {
-            const dateKey = formatDateKey(selectedDate);
-            ensureDateEntry(dateKey);
-
-            const newTask = {
-                id: 'task_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-                title: title.trim(),
-                completed: false
-            };
-
-            habitData[dateKey].additionalTasks.push(newTask);
-            saveData();
-            renderTaskView();
-            triggerHaptic('tap');
-            setMascotReaction(`Added task: "${title.trim()}"! Let's do it!`, "📝", false, true);
-        }
-
-        function toggleAdditionalTask(taskId) {
-            const dateKey = formatDateKey(selectedDate);
-            ensureDateEntry(dateKey);
-
-            const task = habitData[dateKey].additionalTasks.find(t => t.id === taskId);
+        // Task Handlers
+        function toggleMainTask(taskId) {
+            triggerHaptic();
+            const dateStr = formatDateKey(currentDate);
+            const dayData = getDayData(dateStr);
+            const task = dayData.tasks.find(t => t.id === taskId);
+            
             if (task) {
                 task.completed = !task.completed;
-                saveData();
-                renderTaskView(true, task.completed);
+                saveState();
+                renderCurrentDateView();
+
+                const mainCompletedCount = dayData.tasks.filter(t => t.completed).length;
+                if (mainCompletedCount === 10) {
+                    fireConfetti();
+                }
             }
         }
 
-        function deleteAdditionalTask(taskId) {
-            const dateKey = formatDateKey(selectedDate);
-            ensureDateEntry(dateKey);
+        function toggleAdditionalTask(index) {
+            triggerHaptic();
+            const dateStr = formatDateKey(currentDate);
+            const dayData = getDayData(dateStr);
+            
+            if (dayData.additionalTasks && dayData.additionalTasks[index]) {
+                dayData.additionalTasks[index].completed = !dayData.additionalTasks[index].completed;
+                saveState();
+                renderCurrentDateView();
 
-            habitData[dateKey].additionalTasks = habitData[dateKey].additionalTasks.filter(t => t.id !== taskId);
-            saveData();
-            renderTaskView();
-            triggerHaptic('tap');
-            setMascotReaction("Removed task from list.", "🗑️", false, false);
+                const mainCount = dayData.tasks.filter(t => t.completed).length;
+                const addCount = dayData.additionalTasks.filter(t => t.completed).length;
+                if (mainCount + addCount > 10) {
+                    fireConfetti();
+                }
+            }
         }
 
-        // Render Calendar Grid
-        function renderCalendarView() {
-            const year = calendarDate.getFullYear();
-            const month = calendarDate.getMonth();
+        function deleteAdditionalTask(index) {
+            triggerHaptic();
+            const dateStr = formatDateKey(currentDate);
+            const dayData = getDayData(dateStr);
+            
+            if (dayData.additionalTasks) {
+                dayData.additionalTasks.splice(index, 1);
+                saveState();
+                renderCurrentDateView();
+            }
+        }
 
-            calendarMonthLabel.textContent = calendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        // Calendar Generator
+        function renderCalendar() {
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            calendarMonthLabel.textContent = `${monthNames[month]} ${year}`;
+
             calendarGrid.innerHTML = '';
 
             const firstDay = new Date(year, month, 1).getDay();
-            const totalDays = new Date(year, month + 1, 0).getDate();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
 
             for (let i = 0; i < firstDay; i++) {
                 const emptyCell = document.createElement('div');
-                emptyCell.className = 'h-11 rounded-xl bg-transparent';
+                emptyCell.className = 'h-10 rounded-xl bg-black/10';
                 calendarGrid.appendChild(emptyCell);
             }
 
-            const todayKey = formatDateKey(new Date());
-
-            for (let day = 1; day <= totalDays; day++) {
-                const currentDate = new Date(year, month, day);
-                const dateKey = formatDateKey(currentDate);
-                const hasEntry = habitData.hasOwnProperty(dateKey);
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateCellStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                const cellData = habitData[dateCellStr];
                 
-                const stats = getDayStats(dateKey);
-                const isToday = dateKey === todayKey;
+                let scoreClass = 'bg-slate-800/40 text-slate-400 border border-slate-700/40';
+                let scoreDisplay = '-';
 
-                const cell = document.createElement('button');
-                
-                let colorClass = 'bg-white/5 text-slate-400 border border-white/10';
-                if (hasEntry && stats.completed > 0) {
-                    if (stats.isSuperPerfect) {
-                        colorClass = 'super-golden-prize';
-                    } else if (stats.isPerfect) {
-                        colorClass = 'golden-sparkle-prize';
+                if (cellData) {
+                    const mainCount = (cellData.tasks || []).filter(t => t.completed).length;
+                    const addCount = (cellData.additionalTasks || []).filter(t => t.completed).length;
+                    const totalScore = mainCount + addCount;
+
+                    scoreDisplay = mainCount;
+
+                    if (totalScore > 10) {
+                        scoreClass = 'super-golden-prize';
+                    } else if (mainCount === 10) {
+                        scoreClass = 'golden-sparkle-prize';
                     } else {
-                        colorClass = COLOR_CLASSES[stats.colorIndex];
+                        scoreClass = `score-${mainCount}`;
                     }
                 }
 
-                cell.className = `h-11 rounded-xl flex flex-col items-center justify-center relative font-bold text-xs transition-transform active:scale-95 ${colorClass} ${
-                    isToday ? 'ring-2 ring-indigo-400 ring-offset-2 ring-offset-slate-900' : ''
-                }`;
+                const isToday = dateCellStr === formatDateKey(new Date());
 
-                cell.innerHTML = `
-                    <span>${day}</span>
-                    ${hasEntry && stats.completed > 0 ? `<span class="text-[9px] opacity-90 font-semibold">${stats.completed}</span>` : ''}
+                const dayCell = document.createElement('button');
+                dayCell.className = `h-10 rounded-xl flex flex-col items-center justify-center font-bold text-xs transition-transform active:scale-95 ${scoreClass} ${isToday ? 'ring-2 ring-white ring-offset-2 ring-offset-slate-900' : ''}`;
+                dayCell.innerHTML = `
+                    <span class="text-[9px] opacity-80 leading-none">${d}</span>
+                    <span class="text-xs leading-none mt-0.5">${scoreDisplay}</span>
                 `;
-
-                cell.addEventListener('click', () => {
-                    triggerHaptic('tap');
-                    openDayModal(currentDate);
-                });
-                calendarGrid.appendChild(cell);
+                dayCell.addEventListener('click', () => openDayModal(dateCellStr));
+                calendarGrid.appendChild(dayCell);
             }
         }
 
-        // Day Details Modal
-        function openDayModal(date) {
-            activeModalDateStr = formatDateKey(date);
-            ensureDateEntry(activeModalDateStr);
-            const stats = getDayStats(activeModalDateStr);
-            const entry = habitData[activeModalDateStr];
+        // Day Detail Modal
+        function openDayModal(dateStr) {
+            triggerHaptic();
+            modalSelectedDateStr = dateStr;
+            const parts = dateStr.split('-');
+            const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
 
-            modalDate.textContent = formatDateDisplay(date);
-            modalScoreText.textContent = `Completed ${stats.completed} Daily Habits ${
-                stats.isSuperPerfect ? '(Super Golden Neon Prize ✨⚡)' : (stats.isPerfect ? '(Perfect Golden Day ✨)' : '')
-            }`;
+            modalDate.textContent = formatDisplayDate(dateObj);
+            
+            const dayData = getDayData(dateStr);
+            const mainCount = dayData.tasks.filter(t => t.completed).length;
+            const addCount = dayData.additionalTasks.filter(t => t.completed).length;
+
+            modalScoreText.textContent = `Score: ${mainCount}/10 ${addCount > 0 ? `(+${addCount} additional completed)` : ''}`;
 
             modalTasksList.innerHTML = '';
-
-            // Core Tasks
-            TASKS.forEach(task => {
-                const isDone = entry.completedCore.includes(task.id);
+            dayData.tasks.forEach(t => {
                 const item = document.createElement('div');
-                item.className = `p-2.5 rounded-xl border flex items-center justify-between text-xs ${
-                    isDone 
-                        ? 'bg-white/10 border-emerald-500/30 text-slate-100' 
-                        : 'bg-white/5 border-white/5 text-slate-400'
-                }`;
-
+                item.className = 'p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs';
                 item.innerHTML = `
-                    <div class="flex items-center space-x-2.5">
-                        <i class="fa-solid ${task.icon} w-4 text-center"></i>
-                        <span>${task.title}</span>
-                    </div>
-                    <i class="fa-solid ${isDone ? 'fa-check text-emerald-400' : 'fa-minus text-slate-500'}"></i>
+                    <span class="${t.completed ? 'text-emerald-400 font-semibold' : 'text-slate-400'}">${t.text}</span>
+                    <i class="fa-solid ${t.completed ? 'fa-circle-check text-emerald-400' : 'fa-circle-xmark text-slate-600'}"></i>
                 `;
                 modalTasksList.appendChild(item);
             });
 
-            // Additional Tasks
-            if (entry.additionalTasks && entry.additionalTasks.length > 0) {
+            if (dayData.additionalTasks.length > 0) {
                 const header = document.createElement('div');
-                header.className = 'text-[11px] font-bold theme-accent uppercase tracking-wider pt-2';
-                header.textContent = 'Additional Tasks';
+                header.className = 'text-xs font-bold text-amber-400 mt-3 mb-1';
+                header.textContent = 'Additional Tasks:';
                 modalTasksList.appendChild(header);
 
-                entry.additionalTasks.forEach(task => {
-                    const isDone = task.completed;
+                dayData.additionalTasks.forEach(t => {
                     const item = document.createElement('div');
-                    item.className = `p-2.5 rounded-xl border flex items-center justify-between text-xs ${
-                        isDone 
-                            ? 'bg-white/10 border-emerald-500/30 text-slate-100' 
-                            : 'bg-white/5 border-white/5 text-slate-400'
-                    }`;
-
+                    item.className = 'p-2.5 rounded-xl bg-slate-900/60 border border-slate-800 flex items-center justify-between text-xs';
                     item.innerHTML = `
-                        <div class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-star text-amber-400 w-4 text-center"></i>
-                            <span>${escapeHtml(task.title)}</span>
-                        </div>
-                        <i class="fa-solid ${isDone ? 'fa-check text-emerald-400' : 'fa-minus text-slate-500'}"></i>
+                        <span class="${t.completed ? 'text-emerald-400 font-semibold' : 'text-slate-400'}">${t.text}</span>
+                        <i class="fa-solid ${t.completed ? 'fa-circle-check text-emerald-400' : 'fa-circle-xmark text-slate-600'}"></i>
                     `;
                     modalTasksList.appendChild(item);
                 });
@@ -1399,163 +1183,231 @@
             dayModal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
-        function closeModal() {
+        function closeDayModal() {
             dayModal.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // Modals Toggle
-        function openThemeModal() {
-            triggerHaptic('tap');
-            themeModal.classList.remove('opacity-0', 'pointer-events-none');
+        // Settings Modal Handlers
+        function openSettingsModal() {
+            triggerHaptic();
+            settingsModal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
-        function closeThemeModal() {
-            themeModal.classList.add('opacity-0', 'pointer-events-none');
+        function closeSettingsModal() {
+            settingsModal.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        function openAddTaskModal() {
-            triggerHaptic('tap');
-            taskInput.value = '';
-            addTaskModal.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => taskInput.focus(), 100);
+        // Export JSON Backup
+        function exportBackup() {
+            triggerHaptic();
+            const exportData = {
+                version: "3.0",
+                exportDate: new Date().toISOString(),
+                currentTheme: currentTheme,
+                habitData: habitData
+            };
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+            const downloadAnchor = document.createElement('a');
+            const fileName = `habit_tracker_backup_${formatDateKey(new Date())}.json`;
+            
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", fileName);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
         }
 
-        function closeAddTaskModal() {
-            addTaskModal.classList.add('opacity-0', 'pointer-events-none');
+        // Import JSON Backup
+        function handleImportFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+
+                    if (imported && (imported.habitData || typeof imported === 'object')) {
+                        const newHabitData = imported.habitData ? imported.habitData : imported;
+                        
+                        habitData = newHabitData;
+                        if (imported.currentTheme) {
+                            applyTheme(imported.currentTheme);
+                        }
+
+                        saveState();
+                        renderCurrentDateView();
+                        closeSettingsModal();
+
+                        alert("✅ Backup successfully restored!");
+                    } else {
+                        alert("⚠️ Invalid backup file format.");
+                    }
+                } catch (err) {
+                    alert("❌ Failed to parse backup file: " + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
-        // Setup Event Listeners
-        function setupEventListeners() {
-            // Mascot Interactive Tap
-            tvMascotContainer.addEventListener('click', () => {
-                triggerHaptic('tap');
-                const line = TOUCH_DIALOGUES[Math.floor(Math.random() * TOUCH_DIALOGUES.length)];
-                const stats = getDayStats(formatDateKey(selectedDate));
-                setMascotReaction(line, "🤖", stats.isPerfect, true);
-            });
+        // Reset Data
+        function clearAllData() {
+            triggerHaptic();
+            if (confirm("⚠️ Are you sure you want to reset all habit data? This action cannot be undone.")) {
+                habitData = {};
+                saveState();
+                renderCurrentDateView();
+                closeSettingsModal();
+                alert("🧹 All habit tracking data has been cleared.");
+            }
+        }
 
-            // Date Nav
+        // Initialize App Event Listeners
+        function initApp() {
+            applyTheme(currentTheme);
+
+            // Date Controls
             prevDateBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                selectedDate.setDate(selectedDate.getDate() - 1);
-                renderTaskView();
+                triggerHaptic();
+                currentDate.setDate(currentDate.getDate() - 1);
+                renderCurrentDateView();
             });
 
             nextDateBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                selectedDate.setDate(selectedDate.getDate() + 1);
-                renderTaskView();
+                triggerHaptic();
+                currentDate.setDate(currentDate.getDate() + 1);
+                renderCurrentDateView();
             });
 
             todayBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                selectedDate = new Date();
-                renderTaskView();
+                triggerHaptic();
+                currentDate = new Date();
+                renderCurrentDateView();
             });
 
-            // Month Nav
-            prevMonthBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                calendarDate.setMonth(calendarDate.getMonth() - 1);
-                renderCalendarView();
+            // Mascot Click
+            tvMascotContainer.addEventListener('click', () => {
+                triggerHaptic();
+                tvMascotContainer.classList.remove('tv-bouncing');
+                void tvMascotContainer.offsetWidth;
+                tvMascotContainer.classList.add('tv-bouncing');
+
+                const dayData = getDayData(formatDateKey(currentDate));
+                const mainCount = dayData.tasks.filter(t => t.completed).length;
+                const addCount = dayData.additionalTasks.filter(t => t.completed).length;
+                setRandomMascotDialogue(mainCount, (mainCount + addCount) > 10);
             });
 
-            nextMonthBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                calendarDate.setMonth(calendarDate.getMonth() + 1);
-                renderCalendarView();
-            });
-
-            // Tab Switch
+            // Navigation Tabs
             navTasks.addEventListener('click', () => {
-                triggerHaptic('tap');
+                triggerHaptic();
                 taskView.classList.remove('tab-hidden');
                 calendarView.classList.add('tab-hidden');
-
                 navTasks.className = 'flex flex-col items-center py-1 px-3 theme-accent font-bold transition-all duration-200';
                 navCalendar.className = 'flex flex-col items-center py-1 px-3 text-slate-400 font-medium hover:text-slate-200 transition-all duration-200';
-                renderTaskView();
             });
 
             navCalendar.addEventListener('click', () => {
-                triggerHaptic('tap');
+                triggerHaptic();
                 calendarView.classList.remove('tab-hidden');
                 taskView.classList.add('tab-hidden');
-
                 navCalendar.className = 'flex flex-col items-center py-1 px-3 theme-accent font-bold transition-all duration-200';
                 navTasks.className = 'flex flex-col items-center py-1 px-3 text-slate-400 font-medium hover:text-slate-200 transition-all duration-200';
-                
-                const stats = getDayStats(formatDateKey(selectedDate));
-                setMascotReaction("Here's your habit history calendar!", "📅", stats.isPerfect, true);
-                renderCalendarView();
+                renderCalendar();
             });
 
-            // '+' Add Task Button
+            // Calendar Month Nav
+            prevMonthBtn.addEventListener('click', () => {
+                triggerHaptic();
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                triggerHaptic();
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            });
+
+            // Settings Modal
+            settingsModalBtn.addEventListener('click', openSettingsModal);
+            closeSettingsBtn.addEventListener('click', closeSettingsModal);
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) closeSettingsModal();
+            });
+
+            themeOptionBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    triggerHaptic();
+                    const themeId = btn.getAttribute('data-theme-id');
+                    applyTheme(themeId);
+                });
+            });
+
+            exportBackupBtn.addEventListener('click', exportBackup);
+            importFileInput.addEventListener('change', handleImportFile);
+            clearDataBtn.addEventListener('click', clearAllData);
+
+            // Add Task Modal
             navAddTaskBtn.addEventListener('click', () => {
-                if (taskView.classList.contains('tab-hidden')) {
-                    navTasks.click();
-                }
-                openAddTaskModal();
+                triggerHaptic();
+                addTaskModal.classList.remove('opacity-0', 'pointer-events-none');
+                taskInput.focus();
             });
 
-            closeAddTaskBtn.addEventListener('click', closeAddTaskModal);
-            cancelAddTaskBtn.addEventListener('click', closeAddTaskModal);
+            const closeAddModal = () => {
+                addTaskModal.classList.add('opacity-0', 'pointer-events-none');
+                addTaskForm.reset();
+            };
+
+            closeAddTaskBtn.addEventListener('click', closeAddModal);
+            cancelAddTaskBtn.addEventListener('click', closeAddModal);
             addTaskModal.addEventListener('click', (e) => {
-                if (e.target === addTaskModal) closeAddTaskModal();
+                if (e.target === addTaskModal) closeAddModal();
             });
 
             addTaskForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const val = taskInput.value.trim();
-                if (val) {
-                    addAdditionalTask(val);
-                    closeAddTaskModal();
+                const text = taskInput.value.trim();
+                if (text) {
+                    triggerHaptic();
+                    const dateStr = formatDateKey(currentDate);
+                    const dayData = getDayData(dateStr);
+                    dayData.additionalTasks.push({ text: text, completed: false });
+                    saveState();
+                    renderCurrentDateView();
+                    closeAddModal();
                 }
             });
 
-            // Themes
-            themeModalBtn.addEventListener('click', openThemeModal);
-            closeThemeBtn.addEventListener('click', closeThemeModal);
-            themeModal.addEventListener('click', (e) => {
-                if (e.target === themeModal) closeThemeModal();
-            });
-
-            document.querySelectorAll('.theme-option-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    triggerHaptic('tap');
-                    const themeId = btn.getAttribute('data-theme-id');
-                    applyTheme(themeId);
-                    closeThemeModal();
-                    setMascotReaction(`Switched theme to ${THEMES[themeId].name}! Beautiful!`, "🎨", false, true);
-                });
-            });
-
-            // Day Modal
-            closeModalBtn.addEventListener('click', closeModal);
+            // Day Detail Modal
+            closeModalBtn.addEventListener('click', closeDayModal);
             dayModal.addEventListener('click', (e) => {
-                if (e.target === dayModal) closeModal();
+                if (e.target === dayModal) closeDayModal();
             });
 
             modalEditBtn.addEventListener('click', () => {
-                triggerHaptic('tap');
-                if (activeModalDateStr) {
-                    const [y, m, d] = activeModalDateStr.split('-').map(Number);
-                    selectedDate = new Date(y, m - 1, d);
-                    closeModal();
-                    navTasks.click();
+                triggerHaptic();
+                if (modalSelectedDateStr) {
+                    const parts = modalSelectedDateStr.split('-');
+                    currentDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                    renderCurrentDateView();
+                    closeDayModal();
+                    
+                    taskView.classList.remove('tab-hidden');
+                    calendarView.classList.add('tab-hidden');
+                    navTasks.className = 'flex flex-col items-center py-1 px-3 theme-accent font-bold transition-all duration-200';
+                    navCalendar.className = 'flex flex-col items-center py-1 px-3 text-slate-400 font-medium hover:text-slate-200 transition-all duration-200';
                 }
             });
+
+            // Initial Render
+            renderCurrentDateView();
         }
 
-        // App Initialization
-        function init() {
-            loadStorage();
-            applyTheme(currentTheme);
-            renderTaskView();
-            setupEventListeners();
-        }
-
-        window.addEventListener('DOMContentLoaded', init);
+        window.onload = initApp;
     </script>
 </body>
 </html>
