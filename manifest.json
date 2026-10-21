@@ -1,0 +1,17 @@
+{
+  "name": "Daily Habit Tracker",
+  "short_name": "HabitTracker",
+  "description": "Daily habit tracker with TV-kun and Japanese themes",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#ff3b30",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3074/3074058.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
